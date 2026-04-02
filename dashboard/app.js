@@ -17,7 +17,8 @@ function initClock() {
 async function initDashboard() {
     initClock();
 
-    // Obtener los datos concurrentemente
+    let data;
+    // Intentar cargar desde la API
     try {
         const [
             atencionesPaciente,
@@ -36,8 +37,32 @@ async function initDashboard() {
             fetch(`${API_BASE}/referencias-satrec`).then(res => res.json()),
             fetch(`${API_BASE}/turnos-disponibles`).then(res => res.json())
         ]);
+        data = {
+            atencionesPaciente, atencionesSeguro, estadosSatrec,
+            perfilEpi, listaEspera, referenciasSatrec, turnosDisponibles
+        };
+    } catch (apiErr) {
+        console.warn("API no disponible, cargando desde JSON estático...", apiErr);
+        try {
+            const staticData = await fetch('data/indicators.json').then(res => res.json());
+            data = {
+                atencionesPaciente: staticData.atenciones_tipo_paciente,
+                atencionesSeguro: staticData.atenciones_tipo_seguro,
+                estadosSatrec: staticData.estados_solicitudes_satrec,
+                perfilEpi: staticData.perfil_epidemiologico,
+                listaEspera: staticData.lista_espera,
+                referenciasSatrec: staticData.referencias_satrec,
+                turnosDisponibles: staticData.turnos_disponibles
+            };
+        } catch (staticErr) {
+            console.error("Error crítico: No se pudo cargar data estática tampoco.", staticErr);
+            throw staticErr;
+        }
+    }
 
+    try {
         console.log("Data loaded successfully!");
+        const { atencionesPaciente, atencionesSeguro, estadosSatrec, perfilEpi, listaEspera, referenciasSatrec, turnosDisponibles } = data;
 
         // Eliminar loaders
         document.querySelectorAll('.loader').forEach(l => l.remove());
