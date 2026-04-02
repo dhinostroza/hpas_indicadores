@@ -1,0 +1,266 @@
+:root {
+    --bg-base: #0f111a;
+    --bg-card: rgba(26, 29, 41, 0.6);
+    --bg-card-hover: rgba(33, 37, 51, 0.8);
+    --border-color: rgba(255, 255, 255, 0.08);
+    --text-primary: #f8fafc;
+    --text-sec: #94a3b8;
+    
+    --brand-blue: #3b82f6;
+    --brand-cyan: #06b6d4;
+    --brand-emerald: #10b981;
+    --brand-rose: #f43f5e;
+    --brand-amber: #f59e0b;
+    --brand-purple: #8b5cf6;
+
+    --font-ui: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: var(--font-ui);
+    background-color: var(--bg-base);
+    background-image: 
+        radial-gradient(circle at 15% 50%, rgba(59, 130, 246, 0.08), transparent 25%),
+        radial-gradient(circle at 85% 30%, rgba(139, 92, 246, 0.08), transparent 25%);
+    background-attachment: fixed;
+    color: var(--text-primary);
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
+}
+
+#app-container {
+    max-width: 1600px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+/* Header */
+.app-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2.5rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.logo-area {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.logo-mark {
+    width: 48px;
+    height: 48px;
+    background: linear-gradient(135deg, var(--brand-blue), var(--brand-cyan));
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    font-weight: 700;
+    letter-spacing: -1px;
+    box-shadow: 0 0 20px rgba(59, 130, 246, 0.4);
+}
+
+h1 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+}
+
+.subtitle {
+    color: var(--text-sec);
+    font-size: 0.9rem;
+    margin-top: 0.25rem;
+}
+
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    font-size: 0.9rem;
+    color: var(--text-sec);
+    background: rgba(0,0,0,0.2);
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    border: 1px solid var(--border-color);
+}
+
+.status-indicator {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: var(--brand-emerald);
+    box-shadow: 0 0 10px var(--brand-emerald);
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+    70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); }
+    100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+}
+
+/* Dashboard Grid (Bento Box style) */
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    grid-auto-rows: minmax(min-content, 350px);
+    gap: 1.5rem;
+}
+
+/* Bento Sizing */
+.bento-wide { grid-column: span 8; }
+.bento-tall { grid-column: span 4; grid-row: span 2; }
+.bento-standard { grid-column: span 4; }
+.bento-wide-tall { grid-column: span 8; grid-row: span 2; }
+
+@media (max-width: 1200px) {
+    .bento-wide, .bento-tall, .bento-wide-tall, .bento-standard {
+        grid-column: span 6;
+        grid-row: auto;
+    }
+}
+@media (max-width: 768px) {
+    .bento-wide, .bento-tall, .bento-wide-tall, .bento-standard {
+        grid-column: span 12;
+    }
+}
+
+/* Cards */
+.card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 20px;
+    padding: 1.5rem;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    display: flex;
+    flex-direction: column;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.card::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+}
+
+.card:hover {
+    background: var(--bg-card-hover);
+    transform: translateY(-2px);
+    border-color: rgba(255, 255, 255, 0.15);
+    box-shadow: 0 10px 30px -10px rgba(0,0,0,0.5);
+}
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.card h2 {
+    font-size: 1.05rem;
+    font-weight: 500;
+    color: var(--text-primary);
+}
+
+.card h2 span {
+    font-size: 0.85rem;
+    color: var(--text-sec);
+    margin-left: 0.5rem;
+    font-weight: 400;
+}
+
+.badge {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-weight: 600;
+}
+.badge.primary { background: rgba(59, 130, 246, 0.15); color: #60a5fa; border: 1px solid rgba(59,130,246,0.3);}
+.badge.warning { background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245,158,11,0.3);}
+.badge.success { background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16,185,129,0.3);}
+
+/* Chart Area */
+.chart-container {
+    flex: 1;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+}
+
+.chart-container svg {
+    overflow: visible;
+}
+
+/* Loader */
+.loader {
+    width: 24px;
+    height: 24px;
+    border: 3px solid rgba(255,255,255,0.1);
+    border-top-color: var(--brand-blue);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin { 
+    to { transform: rotate(360deg); } 
+}
+
+/* D3 Generic Styles */
+.axis text {
+    font-family: var(--font-ui);
+    fill: var(--text-sec);
+    font-size: 11px;
+}
+.axis path, .axis line {
+    stroke: rgba(255,255,255,0.1);
+}
+.grid line {
+    stroke: rgba(255,255,255,0.05);
+}
+.grid path {
+    stroke: none;
+}
+
+/* D3 Tooltip */
+.d3-tooltip {
+    position: absolute;
+    background: rgba(15, 17, 26, 0.95);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 8px;
+    padding: 12px;
+    color: white;
+    font-size: 13px;
+    font-family: var(--font-ui);
+    pointer-events: none;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+    backdrop-filter: blur(4px);
+    z-index: 100;
+    transition: opacity 0.2s, transform 0.2s;
+    opacity: 0;
+}
+.d3-tooltip strong {
+    color: var(--brand-cyan);
+    display: block;
+    margin-bottom: 4px;
+}

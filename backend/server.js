@@ -1,0 +1,114 @@
+const express = require('express');
+const cors = require('cors');
+
+const app = express();
+app.use(cors());
+app.use(express.json());
+
+const PORT = 3000;
+
+// Fallback in-memory data if Arango is not available
+const seedData = {
+    atenciones_tipo_paciente: [
+        { tipo_consulta: 'PRIMERA', tipo_referencia: 'AUTOREFERIDO', mes: 'ene', anio: 2026, cantidad: 595 },
+        { tipo_consulta: 'PRIMERA', tipo_referencia: 'AUTOREFERIDO', mes: 'feb', anio: 2026, cantidad: 509 },
+        { tipo_consulta: 'PRIMERA', tipo_referencia: 'AUTOREFERIDO', mes: 'mar', anio: 2026, cantidad: 440 },
+        { tipo_consulta: 'PRIMERA', tipo_referencia: 'EMERGENCIA', mes: 'ene', anio: 2026, cantidad: 968 },
+        { tipo_consulta: 'PRIMERA', tipo_referencia: 'EMERGENCIA', mes: 'feb', anio: 2026, cantidad: 773 },
+        { tipo_consulta: 'PRIMERA', tipo_referencia: 'EMERGENCIA', mes: 'mar', anio: 2026, cantidad: 696 },
+        { tipo_consulta: 'PRIMERA', tipo_referencia: 'SAT-REC', mes: 'ene', anio: 2026, cantidad: 1084 },
+        { tipo_consulta: 'PRIMERA', tipo_referencia: 'SAT-REC', mes: 'feb', anio: 2026, cantidad: 902 },
+        { tipo_consulta: 'PRIMERA', tipo_referencia: 'SAT-REC', mes: 'mar', anio: 2026, cantidad: 748 },
+        { tipo_consulta: 'SUBSECUENTE', tipo_referencia: 'AUTOREFERIDO', mes: 'ene', anio: 2026, cantidad: 2523 },
+        { tipo_consulta: 'SUBSECUENTE', tipo_referencia: 'AUTOREFERIDO', mes: 'feb', anio: 2026, cantidad: 2397 },
+        { tipo_consulta: 'SUBSECUENTE', tipo_referencia: 'AUTOREFERIDO', mes: 'mar', anio: 2026, cantidad: 2014 },
+        { tipo_consulta: 'SUBSECUENTE', tipo_referencia: 'EMERGENCIA', mes: 'ene', anio: 2026, cantidad: 3428 },
+        { tipo_consulta: 'SUBSECUENTE', tipo_referencia: 'EMERGENCIA', mes: 'feb', anio: 2026, cantidad: 3428 },
+        { tipo_consulta: 'SUBSECUENTE', tipo_referencia: 'EMERGENCIA', mes: 'mar', anio: 2026, cantidad: 2941 },
+        { tipo_consulta: 'SUBSECUENTE', tipo_referencia: 'SAT-REC', mes: 'ene', anio: 2026, cantidad: 2664 },
+        { tipo_consulta: 'SUBSECUENTE', tipo_referencia: 'SAT-REC', mes: 'feb', anio: 2026, cantidad: 2707 },
+        { tipo_consulta: 'SUBSECUENTE', tipo_referencia: 'SAT-REC', mes: 'mar', anio: 2026, cantidad: 2208 }
+    ],
+    atenciones_tipo_seguro: [
+        { tipo_seguro: 'IESS AFILIADO SEGURO CAMPESINO', mes: 'ene', anio: 2026, cantidad: 79 },
+        { tipo_seguro: 'IESS AFILIADO SEGURO CAMPESINO', mes: 'feb', anio: 2026, cantidad: 81 },
+        { tipo_seguro: 'IESS AFILIADO SEGURO GENERAL', mes: 'ene', anio: 2026, cantidad: 1993 },
+        { tipo_seguro: 'IESS AFILIADO SEGURO GENERAL', mes: 'feb', anio: 2026, cantidad: 1919 },
+        { tipo_seguro: 'MSP/NO APORTA', mes: 'ene', anio: 2026, cantidad: 9299 },
+        { tipo_seguro: 'MSP/NO APORTA', mes: 'feb', anio: 2026, cantidad: 8799 },
+        { tipo_seguro: 'MSP/NO APORTA', mes: 'mar', anio: 2026, cantidad: 7395 }
+    ],
+    estados_solicitudes_satrec: [
+        { estado: 'CANCELAR', cantidad: 5, periodo: 'Q1-2026' },
+        { estado: 'PACIENTE CONFIRMADO', cantidad: 6904, periodo: 'Q1-2026' },
+        { estado: 'PROCESADO', cantidad: 2044, periodo: 'Q1-2026' },
+        { estado: 'REASIGNADO', cantidad: 237, periodo: 'Q1-2026' },
+        { estado: 'RECHAZADO', cantidad: 1197, periodo: 'Q1-2026' },
+        { estado: 'REFERIDO', cantidad: 6640, periodo: 'Q1-2026' },
+        { estado: 'TURNO ASIGNADO', cantidad: 5660, periodo: 'Q1-2026' }
+    ],
+    perfil_epidemiologico: [
+        { orden: 1, codigo_cie10: 'I10-I15', descripcion: 'Enfermedades hipertensivas', consultas: 974, porcentaje: 4.37, periodo: 'ene-feb 2026' },
+        { orden: 2, codigo_cie10: 'M15-M19', descripcion: 'Artrosis', consultas: 878, porcentaje: 3.94, periodo: 'ene-feb 2026' },
+        { orden: 3, codigo_cie10: 'M50-M54', descripcion: 'Otras dorsopatías', consultas: 829, porcentaje: 3.72, periodo: 'ene-feb 2026' },
+        { orden: 4, codigo_cie10: 'K00-K14', descripcion: 'Enf. de la cavidad bucal', consultas: 694, porcentaje: 3.12, periodo: 'ene-feb 2026' },
+        { orden: 5, codigo_cie10: 'E10-E14', descripcion: 'Diabetes mellitus', consultas: 616, porcentaje: 2.77, periodo: 'ene-feb 2026' },
+        { orden: 6, codigo_cie10: 'K20-K31', descripcion: 'Enf. de esófago y estómago', consultas: 574, porcentaje: 2.58, periodo: 'ene-feb 2026' },
+        { orden: 7, codigo_cie10: 'N40-N51', descripcion: 'Enf. órganos genitales masculinos', consultas: 546, porcentaje: 2.45, periodo: 'ene-feb 2026' },
+        { orden: 8, codigo_cie10: 'N17-N19', descripcion: 'Insuficiencia renal', consultas: 541, porcentaje: 2.43, periodo: 'ene-feb 2026' },
+        { orden: 9, codigo_cie10: 'M70-M79', descripcion: 'Trastornos de tejidos blandos', consultas: 501, porcentaje: 2.25, periodo: 'ene-feb 2026' },
+        { orden: 10, codigo_cie10: 'E00-E07', descripcion: 'Trastornos glándula tiroides', consultas: 494, porcentaje: 2.22, periodo: 'ene-feb 2026' }
+    ],
+    lista_espera: [
+        { especialidad: 'MEDICINA INTERNA', turnos_en_espera: 2136, tendencia: 45, fecha_corte: '2026-03-24' },
+        { especialidad: 'OFTALMOLOGIA', turnos_en_espera: 2049, tendencia: -21, fecha_corte: '2026-03-24' },
+        { especialidad: 'TRAUMATOLOGIA', turnos_en_espera: 1940, tendencia: 10, fecha_corte: '2026-03-24' },
+        { especialidad: 'NEUROLOGIA', turnos_en_espera: 1509, tendencia: 120, fecha_corte: '2026-03-24' },
+        { especialidad: 'UROLOGIA', turnos_en_espera: 1435, tendencia: -5, fecha_corte: '2026-03-24' },
+        { especialidad: 'PSIQUIATRIA', turnos_en_espera: 1371, tendencia: 33, fecha_corte: '2026-03-24' },
+        { especialidad: 'GASTROENTEROLOGIA', turnos_en_espera: 1302, tendencia: -12, fecha_corte: '2026-03-24' },
+        { especialidad: 'ENDOCRINOLOGIA', turnos_en_espera: 1254, tendencia: 0, fecha_corte: '2026-03-24' },
+        { especialidad: 'GINECOLOGIA', turnos_en_espera: 1183, tendencia: 4, fecha_corte: '2026-03-24' },
+        { especialidad: 'OTORRINOLARINGOLOGIA', turnos_en_espera: 927, tendencia: -15, fecha_corte: '2026-03-24' },
+        { especialidad: 'REUMATOLOGIA', turnos_en_espera: 842, tendencia: 7, fecha_corte: '2026-03-24' },
+        { especialidad: 'DERMATOLOGIA', turnos_en_espera: 721, tendencia: -3, fecha_corte: '2026-03-24' },
+        { especialidad: 'NUTRICION', turnos_en_espera: 717, tendencia: 22, fecha_corte: '2026-03-24' },
+        { especialidad: 'NEFROLOGIA', turnos_en_espera: 622, tendencia: -9, fecha_corte: '2026-03-24' }
+    ],
+    referencias_satrec: [
+        { especialidad: 'OFTALMOLOGIA', cantidad: 1559, establecimiento_destino: 'PABLO ARTURO SUAREZ', periodo: 'feb 2026' },
+        { especialidad: 'GASTROENTEROLOGIA', cantidad: 872, establecimiento_destino: 'PABLO ARTURO SUAREZ', periodo: 'feb 2026' },
+        { especialidad: 'TRAUMATOLOGIA', cantidad: 732, establecimiento_destino: 'PABLO ARTURO SUAREZ', periodo: 'feb 2026' },
+        { especialidad: 'OTORRINOLARINGOLOGIA', cantidad: 682, establecimiento_destino: 'PABLO ARTURO SUAREZ', periodo: 'feb 2026' },
+        { especialidad: 'ENDOCRINOLOGIA', cantidad: 469, establecimiento_destino: 'PABLO ARTURO SUAREZ', periodo: 'feb 2026' },
+        { especialidad: 'CIRUGIA VASCULAR', cantidad: 447, establecimiento_destino: 'PABLO ARTURO SUAREZ', periodo: 'feb 2026' },
+        { especialidad: 'UROLOGIA', cantidad: 386, establecimiento_destino: 'PABLO ARTURO SUAREZ', periodo: 'feb 2026' },
+        { especialidad: 'DERMATOLOGIA', cantidad: 326, establecimiento_destino: 'PABLO ARTURO SUAREZ', periodo: 'feb 2026' },
+        { especialidad: 'CIRUGIA MAXILOFACIAL', cantidad: 277, establecimiento_destino: 'PABLO ARTURO SUAREZ', periodo: 'feb 2026' },
+        { especialidad: 'NEUROLOGIA', cantidad: 247, establecimiento_destino: 'PABLO ARTURO SUAREZ', periodo: 'feb 2026' }
+    ],
+    turnos_disponibles: [
+        { especialidad: 'PRE ANESTESIA', mes: 'mar', anio: 2026, turnos_disponibles: 159 },
+        { especialidad: 'PRE ANESTESIA', mes: 'abr', anio: 2026, turnos_disponibles: 310 },
+        { especialidad: 'PLANIFICACIÓN FAMILIAR', mes: 'mar', anio: 2026, turnos_disponibles: 120 },
+        { especialidad: 'PLANIFICACIÓN FAMILIAR', mes: 'abr', anio: 2026, turnos_disponibles: 191 },
+        { especialidad: 'OFTALMOLOGIA CIRUGIAS', mes: 'mar', anio: 2026, turnos_disponibles: 88 },
+        { especialidad: 'OFTALMOLOGIA CIRUGIAS', mes: 'abr', anio: 2026, turnos_disponibles: 61 },
+        { especialidad: 'NEUMOLOGIA', mes: 'mar', anio: 2026, turnos_disponibles: 76 },
+        { especialidad: 'NEUMOLOGIA', mes: 'abr', anio: 2026, turnos_disponibles: 222 },
+        { especialidad: 'CARDIOLOGIA', mes: 'abr', anio: 2026, turnos_disponibles: 193 },
+        { especialidad: 'FISIATRIA', mes: 'abr', anio: 2026, turnos_disponibles: 217 }
+    ]
+};
+
+app.get('/api/atenciones/tipo-paciente', (req, res) => res.json(seedData.atenciones_tipo_paciente));
+app.get('/api/atenciones/tipo-seguro', (req, res) => res.json(seedData.atenciones_tipo_seguro));
+app.get('/api/estados-satrec', (req, res) => res.json(seedData.estados_solicitudes_satrec));
+app.get('/api/perfil-epidemiologico', (req, res) => res.json(seedData.perfil_epidemiologico));
+app.get('/api/lista-espera', (req, res) => res.json(seedData.lista_espera));
+app.get('/api/referencias-satrec', (req, res) => res.json(seedData.referencias_satrec));
+app.get('/api/turnos-disponibles', (req, res) => res.json(seedData.turnos_disponibles));
+
+app.listen(PORT, '0.0.0.0', () => {
+    console.log(`Backend de Indicadores HPAS escuchando en http://0.0.0.0:${PORT}`);
+});
