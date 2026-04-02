@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="es" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HPAS Indicadores Estratégicos</title>
+    <meta name="description" content="Dashboard interactivo de indicadores del Hospital Pablo Arturo Suárez">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Tailored CSS for Premium Dark UI -->
+    <link rel="stylesheet" href="styles.css">
+    
+    <!-- D3.js -->
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+</head>
+<body>
+    <div id="app-container">
+        <header class="app-header">
+            <div class="logo-area">
+                <div class="logo-mark">H</div>
+                <div>
+                    <h1>HPAS Inteligencia Hospitalaria</h1>
+                    <p class="subtitle">Panel de Control Estratégico y Epidemiológico</p>
+                </div>
+            </div>
+            <div class="header-actions">
+                <span class="status-indicator online"></span>
+                <span class="time-display" id="time-display">--:--:--</span>
+            </div>
+        </header>
+
+        <main class="dashboard-grid">
+            <!-- Row 1: High Level Stats -->
+            <section class="card bento-wide" id="panel-atenciones">
+                <header class="card-header">
+                    <h2>Atenciones por Tipo de Paciente</h2>
+                    <span class="badge primary">Consulta Externa</span>
+                </header>
+                <div class="chart-container" id="chart-atenciones">
+                    <div class="loader"></div>
+                </div>
+            </section>
+
+            <section class="card bento-tall" id="panel-seguro">
+                <header class="card-header">
+                    <h2>Distribución por Aseguramiento</h2>
+                </header>
+                <div class="chart-container" id="chart-seguro">
+                    <div class="loader"></div>
+                </div>
+            </section>
+
+            <!-- Row 2: Referencias y Epidemiologia -->
+            <section class="card bento-standard" id="panel-estados">
+                <header class="card-header">
+                    <h2>Estados SAT-REC</h2>
+                </header>
+                <div class="chart-container" id="chart-estados">
+                    <div class="loader"></div>
+                </div>
+            </section>
+
+            <section class="card bento-standard" id="panel-epi">
+                <header class="card-header">
+                    <h2>Perfil Epidemiológico (CIE-10)</h2>
+                    <span class="badge warning">Top 10</span>
+                </header>
+                <div class="chart-container" id="chart-epi">
+                    <div class="loader"></div>
+                </div>
+            </section>
+
+            <!-- Row 3: Turnos y Lista Espera -->
+            <section class="card bento-wide-tall panel-espera" id="panel-espera">
+                <header class="card-header">
+                    <h2>Lista de Espera <span>22,591 Turnos Acumulados</span></h2>
+                </header>
+                <div class="chart-container" id="chart-espera">
+                    <div class="loader"></div>
+                </div>
+            </section>
+
+            <section class="card bento-standard" id="panel-referencias">
+                <header class="card-header">
+                    <h2>Demanda Referida SAT-REC</h2>
+                </header>
+                <div class="chart-container" id="chart-referencias">
+                    <div class="loader"></div>
+                </div>
+            </section>
+
+            <section class="card bento-standard" id="panel-disponibles">
+                <header class="card-header">
+                    <h2>Disponibilidad de Turnos</h2>
+                    <span class="badge success">Mar/Abr 2026</span>
+                </header>
+                <div class="chart-container" id="chart-disponibles">
+                    <div class="loader"></div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Scripts -->
+    <script src="charts/chart-atenciones.js"></script>
+    <script src="charts/chart-seguro.js"></script>
+    <script src="charts/chart-estados.js"></script>
+    <script src="charts/chart-epi.js"></script>
+    <script src="charts/chart-espera.js"></script>
+    <script src="charts/chart-referencias.js"></script>
+    <script src="charts/chart-disponibles.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
